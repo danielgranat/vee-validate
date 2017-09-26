@@ -4691,9 +4691,9 @@ Generator.generate = function generate (el, binding, vnode, options) {
 };
 
 /**
- * 
- * @param {*} el 
- * @param {*} binding 
+ *
+ * @param {*} el
+ * @param {*} binding
  */
 Generator.resolveRules = function resolveRules (el, binding) {
   if (!binding || !binding.expression) {
@@ -4712,7 +4712,7 @@ Generator.resolveRules = function resolveRules (el, binding) {
 };
 
 /**
- * @param {*} vnode 
+ * @param {*} vnode
  */
 Generator.resolveInitialValue = function resolveInitialValue (vnode) {
   var model = vnode.data.model || find(vnode.data.directives, function (d) { return d.name === 'model'; });
@@ -4722,7 +4722,7 @@ Generator.resolveInitialValue = function resolveInitialValue (vnode) {
 
 /**
  * Creates a non-circular partial VM instance from a Vue instance.
- * @param {*} vm 
+ * @param {*} vm
  */
 Generator.makeVM = function makeVM (vm) {
   return {
@@ -4755,8 +4755,8 @@ Generator.resolveDelay = function resolveDelay (el, vnode, options) {
 
 /**
  * Resolves the alias for the field.
- * @param {*} el 
- * @param {*} vnode 
+ * @param {*} el
+ * @param {*} vnode
  * @return {Function} alias getter
  */
 Generator.resolveAlias = function resolveAlias (el, vnode) {
@@ -4793,7 +4793,7 @@ Generator.resolveScope = function resolveScope (el, binding, vnode) {
     scope = vnode.child.$attrs && vnode.child.$attrs['data-vv-scope'];
   }
 
-  return scope || getScope(el);
+  return !isNullOrUndefined(scope) ? scope : getScope(el);
 };
 
 /**
