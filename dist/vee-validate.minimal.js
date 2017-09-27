@@ -649,11 +649,11 @@ ErrorBag.prototype.add = function add (error) {
       field: arguments[0],
       msg: arguments[1],
       rule: arguments[2],
-      scope: arguments[3] || null
+      scope: !isNullOrUndefined(arguments[3]) ? arguments[3] : null
     };
   }
 
-  error.scope = error.scope || null;
+  error.scope = !isNullOrUndefined(error.scope) ? error.scope : null;
   this.items.push(error);
 };
 
