@@ -239,7 +239,7 @@ var getDataAttribute = function (el, name) { return el.getAttribute(("data-vv-" 
 
 /**
  * Checks if the value is either null or undefined.
- * @param {*} value 
+ * @param {*} value
  */
 var isNullOrUndefined = function (value) {
   return value === null || value === undefined;
@@ -284,8 +284,8 @@ var createFlags = function () { return ({
 /**
  * Shallow object comparison.
  *
- * @param {*} lhs 
- * @param {*} rhs 
+ * @param {*} lhs
+ * @param {*} rhs
  * @return {Boolean}
  */
 var isEqual = function (lhs, rhs) {
@@ -322,11 +322,11 @@ var isEqual = function (lhs, rhs) {
  */
 var getScope = function (el) {
   var scope = getDataAttribute(el, 'scope');
-  if (! scope && el.form) {
+  if (isNullOrUndefined(scope) && el.form) {
     scope = getDataAttribute(el.form, 'scope');
   }
 
-  return scope || null;
+  return !isNullOrUndefined(scope) ? scope : null;
 };
 
 /**
@@ -660,8 +660,8 @@ ErrorBag.prototype.add = function add (error) {
 /**
  * Updates a field error with the new field scope.
  *
- * @param {String} id 
- * @param {Object} error 
+ * @param {String} id
+ * @param {Object} error
  */
 ErrorBag.prototype.update = function update (id, error) {
   var item = find(this.items, function (i) { return i.id === id; });
@@ -682,7 +682,7 @@ ErrorBag.prototype.update = function update (id, error) {
    * @return {Array} errors Array of all error messages.
    */
 ErrorBag.prototype.all = function all (scope) {
-  if (! scope) {
+  if (isNullOrUndefined(scope)) {
     return this.items.map(function (e) { return e.msg; });
   }
 
@@ -695,7 +695,7 @@ ErrorBag.prototype.all = function all (scope) {
    * @return {boolean} result True if there was at least one error, false otherwise.
    */
 ErrorBag.prototype.any = function any (scope) {
-  if (! scope) {
+  if (isNullOrUndefined(scope)) {
     return !! this.items.length;
   }
 
@@ -710,7 +710,7 @@ ErrorBag.prototype.any = function any (scope) {
 ErrorBag.prototype.clear = function clear (scope) {
     var this$1 = this;
 
-  if (! scope) {
+  if (isNullOrUndefined(scope)) {
     scope = null;
   }
 
@@ -749,7 +749,7 @@ ErrorBag.prototype.collect = function collect (field, scope, map) {
   }
 
   field = !isNullOrUndefined(field) ? String(field) : field;
-  if (! scope) {
+  if (isNullOrUndefined(scope)) {
     return this.items.filter(function (e) { return e.field === field; }).map(function (e) { return (map ? e.msg : e); });
   }
 
@@ -768,7 +768,7 @@ ErrorBag.prototype.count = function count () {
 /**
  * Finds and fetches the first error message for the specified field id.
  *
- * @param {String} id 
+ * @param {String} id
  */
 ErrorBag.prototype.firstById = function firstById (id) {
   var error = find(this.items, function (i) { return i.id === id; });
@@ -863,7 +863,7 @@ ErrorBag.prototype.firstNot = function firstNot (name, rule, scope) {
 
 /**
  * Removes errors by matching against the id.
- * @param {String} id 
+ * @param {String} id
  */
 ErrorBag.prototype.removeById = function removeById (id) {
     var this$1 = this;
@@ -892,7 +892,7 @@ ErrorBag.prototype.remove = function remove (field, scope, id) {
       return e.id === id;
     }
 
-    if (scope) {
+    if (!isNullOrUndefined(scope)) {
       return e.field === field && e.scope === scope;
     }
 
@@ -1349,7 +1349,7 @@ Generator.resolveScope = function resolveScope (el, binding, vnode) {
     scope = binding.value.scope;
   }
 
-  if (vnode.child && !scope) {
+  if (vnode.child && isNullOrUndefined(scope)) {
     scope = vnode.child.$attrs && vnode.child.$attrs['data-vv-scope'];
   }
 
@@ -2239,7 +2239,7 @@ Validator.updateDictionary = function updateDictionary (data) {
 /**
  * Adds a locale object to the dictionary.
  * @deprecated
- * @param {Object} locale 
+ * @param {Object} locale
  */
 Validator.addLocale = function addLocale (locale) {
   if (! locale.name) {
@@ -2254,7 +2254,7 @@ Validator.addLocale = function addLocale (locale) {
 /**
  * Adds a locale object to the dictionary.
  * @deprecated
- * @param {Object} locale 
+ * @param {Object} locale
  */
 Validator.prototype.addLocale = function addLocale (locale) {
   Validator.addLocale(locale);
@@ -2272,7 +2272,7 @@ Validator.prototype.localize = function localize (lang, dictionary) {
 
 /**
  * Adds and sets the current locale for the validator.
- * 
+ *
  * @param {String} lang
  * @param {Object} dictionary
  */
@@ -2353,9 +2353,9 @@ Validator.prototype.detach = function detach (name, scope) {
   this.errors.remove(field.name, field.scope, field.id);
   this.fields.remove(field);
   var flags = this.flags;
-  if (field.scope && flags[("$" + (field.scope))]) {
+  if (!isNullOrUndefined(field.scope) && flags[("$" + (field.scope))]) {
     delete flags[("$" + (field.scope))][field.name];
-  } else if (!field.scope) {
+  } else if (isNullOrUndefined(field.scope)) {
     delete flags[field.name];
   }
 
@@ -2375,8 +2375,8 @@ Validator.prototype.extend = function extend (name, validator) {
 /**
  * Updates a field, updating both errors and flags.
  *
- * @param {String} id 
- * @param {Object} diff 
+ * @param {String} id
+ * @param {Object} diff
  */
 Validator.prototype.update = function update (id, ref) {
     var scope = ref.scope;
@@ -2385,9 +2385,9 @@ Validator.prototype.update = function update (id, ref) {
   this.errors.update(id, { scope: scope });
 
   // remove old scope.
-  if (field.scope && this.flags[("$" + (field.scope))]) {
+  if (!isNullOrUndefined(field.scope) && this.flags[("$" + (field.scope))]) {
     delete this.flags[("$" + (field.scope))][field.name];
-  } else if (!field.scope) {
+  } else if (isNullOrUndefined(field.scope)) {
     delete this.flags[field.name];
   }
 
@@ -2640,13 +2640,13 @@ Validator.prototype._getFieldDisplayName = function _getFieldDisplayName (field)
 
 /**
  * Adds a field flags to the flags collection.
- * @param {Field} field 
- * @param {String|null} scope 
+ * @param {Field} field
+ * @param {String|null} scope
  */
 Validator.prototype._addFlag = function _addFlag (field, scope) {
     if ( scope === void 0 ) scope = null;
 
-  if (!scope) {
+  if (isNullOrUndefined(scope)) {
     this.flags = assign({}, this.flags, ( obj = {}, obj[("" + (field.name))] = field.flags, obj ));
       var obj;
     return;
@@ -2805,7 +2805,7 @@ Validator._guardExtend = function _guardExtend (name, validator) {
  * @return {Field}
  */
 Validator.prototype._resolveField = function _resolveField (name, scope) {
-  if (scope) {
+  if (!isNullOrUndefined(scope)) {
     return this.fields.find({ name: name, scope: scope });
   }
 
@@ -2833,7 +2833,7 @@ Validator.prototype._resolveField = function _resolveField (name, scope) {
 Validator.prototype._handleFieldNotFound = function _handleFieldNotFound (name, scope) {
   if (!this.strict) { return Promise.resolve(true); }
 
-  var fullName = scope ? name : ("" + (scope ? scope + '.' : '') + name);
+  var fullName = isNullOrUndefined(scope) ? name : ("" + (!isNullOrUndefined(scope) ? scope + '.' : '') + name);
   throw createError(
     ("Validating a non-existant field: \"" + fullName + "\". Use \"attach()\" first.")
   );
