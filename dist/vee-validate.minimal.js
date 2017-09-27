@@ -1540,7 +1540,7 @@ prototypeAccessors$1.value.get = function () {
 };
 
 /**
- * If the field rejects false as a valid value for the required rule. 
+ * If the field rejects false as a valid value for the required rule.
  */
 prototypeAccessors$1.rejectsFalse.get = function () {
   if (this.isVue || this.isHeadless) {
@@ -1583,10 +1583,11 @@ Field.prototype.update = function update (options) {
   this.initial = options.initial || this.initial || false;
 
   // update errors scope if the field scope was changed.
-  if (this.updated && options.scope && options.scope !== this.scope && isCallable(this.validator.update)) {
+  if (this.updated && !isNullOrUndefined(options.scope) && options.scope !== this.scope && isCallable(this.validator.update)) {
     this.validator.update(this.id, { scope: options.scope });
   }
-  this.scope = options.scope || this.scope || null;
+  this.scope = !isNullOrUndefined(options.scope) ? options.scope
+    : !isNullOrUndefined(this.scope) ? this.scope : null;
   this.name = (!isNullOrUndefined(options.name) ? String(options.name) : options.name) || this.name || null;
   this.rules = options.rules !== undefined ? normalizeRules(options.rules) : this.rules;
   this.model = options.model || this.model;
@@ -1642,7 +1643,7 @@ Field.prototype.reset = function reset () {
 
 /**
  * Sets the flags and their negated counterparts, and updates the classes and re-adds action listeners.
- * @param {Object} flags 
+ * @param {Object} flags
  */
 Field.prototype.setFlags = function setFlags (flags) {
     var this$1 = this;
